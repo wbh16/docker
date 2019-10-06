@@ -1,0 +1,22 @@
+# remove *-dev packages
+devpackages=`dpkg -l|grep '\-dev'|awk '{print $2}'|xargs`
+DEBIAN_FRONTEND=noninteractive apt-get --yes purge \
+  autoconf \
+  build-essential \
+  bzip2 \
+  cpp \
+  #m4 \
+  make \
+  patch \
+  perl \
+  perl-modules-5.28 \
+  #pkg-config \
+  #xz-utils \
+  ${devpackages} && \
+apt autoremove && apt autoclean && \
+rm -rf /var/lib/apt/lists/*
+
+
+
+
+

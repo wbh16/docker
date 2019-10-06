@@ -1,0 +1,33 @@
+# acertando permissões:
+        sudo chmod 2770 /home/ifes/docker/asterisk/configs/ -R && sudo chown 101:$USER /home/ifes/docker/asterisk/configs/ -R
+
+# Baixar a imagem direto do dockerhub, com isso não usamos o próximo passo:
+	docker pull wbh16/asterisk
+
+# Se ainda não criou a imagem:
+	docker build . -t asterisk
+
+# Comando para iniciar o conteiner apartir da imagem do asterisk na rede do dockerhub:
+	docker run -d --name asterisk -h asterisk -p 4569:4569/udp wbh16/asterisk:stable
+ou
+	docker run -d --name asterisk -h asterisk -p 5060-5061:5060-5061/udp -p 4569:4569/udp --volume /var/docker/asterisk/configs/custom:/var/lib/asterisk/sounds/custom/ wbh16/asterisk:stable
+
+# Iniciar uma seção no bash do servidor asterisk:
+	docker exec -it asterisk bash
+
+# Contêiner asterisk iniciar sempre com o docker:
+        docker update --restart always asterisk
+
+# Insere no arquivo "modules.conf" antes(i) ou após(a) encontrar o termo "[global]" a linha "noload => chan_skinny.so":
+	sed -i '/\[global\]/i noload => chan_skinny.so' /etc/asterisk/modules.conf
+
+# Devemos estar atentos para acertar a localidade, podemos usar:
+	dpkg-reconfigure tzdata
+opção 2 (America) e depois opção 133 (Sao_Paulo)
+
+# Verificar os codecs ativos no asterisk:
+	asterisk -rvvvvvvvv
+	
+e estando no asterisk*CLI> 
+	core show translation
+
